@@ -1,0 +1,153 @@
+<html layout:decorator="layoutmap" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div layout:fragment="content" class="panel panel-default">
+
+    <div class="panel-heading">
+        <h3 class="panel-title">Map with your devices</h3>
+    </div>
+    <div class="panel-body">
+        <div th:if="${message}"
+             th:text="${message}"
+             id="message" class="alert alert-info">
+        </div>
+
+        <div id="map" class="map"></div>
+
+        <!--<script src="/resources/sockjs-0.3.4.js"></script>-->
+        <script src="//cdn.jsdelivr.net/sockjs/1.0.3/sockjs.min.js"></script>
+        <script src="/resources/stomp.js"></script>
+        <script type="text/javascript" >
+            /*<![CDATA[*/
+            var map = new ol.Map({
+                target: 'map',
+                layers: [
+                    new ol.layer.Tile({
+                        source: new ol.source.OSM({layer: 'map'})
+                    })
+                ],
+                view: new ol.View({
+                    center: ol.proj.fromLonLat([30.41, 61.82]),
+                    zoom: 5
+                })
+            });
+
+            //todo после загрузки документа и старта карты, грузим список объектов
+            //todo по списку создаем объекты на карте
+            //todo получаем координаты новых объектов по мере поступления
+
+            marks = {};
+
+            $(document).ready(function () {
+                $.get("/mapdata/devices", function (data) {
+
+                    var markers = [];
+
+                    for (var i = 0; i < data.devices.length; i++) {
+
+                        var dev = data.devices[i];
+                        var coord = ol.proj.fromLonLat([dev.lon, dev.lat]);
+
+                        var geoMarker = new ol.Feature({
+                            type: 'icon',
+                            geometry: new ol.geom.Point(coord)
+                        });
+                        marks[''+dev.id]=geoMarker;
+
+                        markers.push(geoMarker);
+                    }
+
+                    var iconStyle = new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: 7,
+                            fill: new ol.style.Fill({
+                                color: '#ff3333'
+                            })
+                        })
+
+                          //      new ol.style.Icon({
+                          //  anchor: [0.5, 1],
+                          //  src: '/resources/favicon-32x32.png'
+                        //})
+                    });
+
+                    var vectorLayer = new ol.layer.Vector({
+                        source: new ol.source.Vector({
+                            features: markers
+                        }),
+                        style: iconStyle
+                    });
+
+                    map.addLayer(vectorLayer);
+                    //alert("Data Loaded: " + data.devices.length);
+                    connect(data.userId);
+                });
+
+            });
+
+            var stompClient = null;
+
+            function setConnected(connected) {
+                document.getElementById('connect').disabled = connected;
+                document.getElementById('disconnect').disabled = !connected;
+                document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
+                document.getElementById('response').innerHTML = '';
+            }
+
+            function connect(userId) {
+                console.log('Trying to connect '+userId);
+                var socket = new SockJS('/ws');
+                stompClient = Stomp.over(socket);
+                stompClient.connect({}, function(frame) {
+                    //setConnected(true);
+                    //console.log('Connected ('+userId+'): ' + frame);
+                    stompClient.subscribe('/topic/map/user/'+userId, function(greeting){
+                        //  showGreeting(JSON.parse(greeting.body).content);
+                       // alert(greeting.body);
+
+                        var data = JSON.parse(greeting.body);
+                         for (var i = 0; i < data.devices.length; i++) {
+
+                         var dev = data.devices[i];
+                         var coord = ol.proj.fromLonLat([dev.lon, dev.lat]);
+
+                          var geoMarker = marks[''+dev.id];
+                          geoMarker.setGeometry ( new ol.geom.Point(coord));
+                             //marker.geometry.setLatLng(coord)
+                         }
+                        map.render();
+                    });
+                });
+            }
+
+            function disconnect() {
+                if (stompClient != null) {
+                    stompClient.disconnect();
+                }
+                setConnected(false);
+                console.log("Disconnected");
+            }
+
+            function sendName() {
+                var name = document.getElementById('name').value;
+                stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
+            }
+
+            function showGreeting(message) {
+                var response = document.getElementById('response');
+                var p = document.createElement('p');
+                p.style.wordWrap = 'break-word';
+                p.appendChild(document.createTextNode(message));
+                response.appendChild(p);
+            }
+            /*]]>*/
+        </script>
+
+
+    </div>
+
+</div>
+</body>
+</html>
+`

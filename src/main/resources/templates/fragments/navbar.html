@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title></title>
+</head>
+<body>
+
+<!-- Fixed navbar -->
+<div th:fragment="navbar">
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Ridelr</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
+                                th:text="#{events}"></span> <span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a th:href="@{/events/all}" th:text="#{events.all}"></a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header" th:text="#{manage}"></li>
+                            <li><a th:href="@{/events/user}" th:text="#{events.your}"></a></li>
+                            <li><a th:href="@{/events/add}" th:text="#{events.add}"></a></li>
+                        </ul>
+                    </li>
+                    <li sec:authorize="hasRole('ROLE_USER')" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span th:text="#{maps}"></span> <span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a th:href="@{/maps/view}" th:text="#{maps.world}"></a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header" th:text="#{manage}"></li>
+                            <li><a th:href="@{/maps/list}" th:text="#{maps.list}"></a></li>
+                            <li><a th:href="@{/maps/add}" th:text="#{maps.add}"></a></li>
+                        </ul>
+                    </li>
+                    <li sec:authorize="hasRole('ROLE_USER')" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
+                                th:text="#{devices}"></span> <span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a th:href="@{/devices/user}" th:text="#{devices.list}"></a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header" th:text="#{manage}"></li>
+                            <li><a th:href="@{/devices/add}" th:text="#{devices.add}"></a></li>
+                        </ul>
+                    </li>
+                    <li><a th:href="@{/contact}" th:text="#{contact}"></a></li>
+                    <li><a th:href="@{/about}" th:text="#{about}"></a></li>
+
+
+                    <li sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
+                                th:text="#{admin}"></span> <span
+                                class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li sec:authorize="hasRole('ROLE_ADMIN')"><a th:href="@{/user/infoall}"
+                                                                         th:text="#{admin.userlist}"></a></li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header" th:text="#{manage}"></li>
+                        </ul>
+                    </li>
+
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li sec:authorize="hasRole('ROLE_USER')"><a th:href="@{/user/info}" sec:authentication="name"></a>
+                    </li>
+                    <!--<li sec:authorize="isAnonymous()"><a th:href="@{/login}" th:text="#{sign.in}"></a></li>-->
+
+                    <!--<li sec:authorize="hasRole('ROLE_USER')"><a th:href="@{/user/info}" ><span th:text="#{profile} " class="glyphicon glyphicon-cog"></span></a></li>-->
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">RU/EN</a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="?lang=ru"><span class="lang-sm lang-lbl-full" lang="ru"></span></a></li>
+                            <li><a href="?lang=en"><span class="lang-sm lang-lbl-full" lang="en"></span></a></li>
+                        </ul>
+                    </li>
+                    <li sec:authorize="isAnonymous()">
+                        <form th:action="@{/login}" method="get">
+                            <button class="btn btn-primary navbar-btn" type="submit"><span th:text="#{sign.in}"></span>
+                            </button>
+                        </form>
+                    </li>
+                    <li sec:authorize="hasRole('ROLE_USER')">
+                        <form th:action="@{/logout}" method="post">
+                            <button class="btn btn-primary navbar-btn" type="submit"><span
+                                    class="glyphicon glyphicon-off"></span>&nbsp;<span th:text="#{sign.out}"></span>
+                            </button>
+                        </form>
+                    </li>
+
+                </ul>
+            </div>
+            <!--/.navbar-collapse -->
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

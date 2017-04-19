@@ -1,0 +1,38 @@
+<html layout:decorator="layout" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+
+    <script type="text/javascript">
+        var onloadCallback = function() {
+            grecaptcha.render('html_element_captcha', {
+                'sitekey' : '6LfnQg0TAAAAAN-tGgu3IIXPYh-IxBp_BATsu6Ks'
+            });
+        };
+    </script>
+
+    <form class="form-signin" role="form" name="f" th:action="@{/user/register}" method="post">
+        <h2 class="form-signin-heading">Please, register</h2>
+
+        <div th:if="${message}"
+             th:text="${message}"
+             id="message" class="alert alert-info">
+        </div>
+        <input type="email" name="email" class="form-control" placeholder="Email address" required="true"
+               autofocus="true"/>
+        <input type="password" name="password" class="form-control" placeholder="Password" required="true"/>
+        <input type="password" name="password2" class="form-control" placeholder="Repeat password" required="true"/>
+
+        <div id="html_element_captcha"></div>
+
+        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&amp;render=explicit">
+        </script>
+
+        <button name="sub" class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+
+    </form>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<html layout:decorator="layout" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+</head>
+<body>
+<div layout:fragment="content" class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">User list</h3>
+    </div>
+    <div class="panel-body">
+        <div th:if="${message}"
+             th:text="${message}"
+             id="message" class="alert alert-info">
+        </div>
+
+        <table class="table table-striped table-condensed">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Created</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <tr th:each="item : ${users}">
+                <td><strong><a th:href="@{/user/info/{id}(id=${item.id})}" th:text="${item.id}"></a></strong></td>
+
+                <td th:text="${item.username}"/>
+                <td th:text="${item.email}"></td>
+                <td th:text="${item.created}"/>
+
+
+            </tr>
+
+
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+</body>
+</html>
+                                                                                                  `

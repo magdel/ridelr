@@ -1,0 +1,68 @@
+<html layout:decorator="layout" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+</head>
+<body>
+<div layout:fragment="content" class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">User information</h3>
+    </div>
+    <div class="panel-body">
+        <div th:if="${message}"
+             th:text="${message}"
+             id="message" class="alert alert-info">
+        </div>
+        <table class="table table-striped">
+
+            <tbody>
+            <tr>
+                    <td>id</td>
+                    <td th:text="${publicUser.id}"></td>
+            </tr>
+            <tr>
+                <td>Login</td>
+                <td th:text="${publicUser.username}"></td>
+            </tr>
+            <tr>
+                <td>Added</td>
+                <td th:text="${publicUser.created}"></td>
+            </tr>
+
+            <tr>
+                <td>Name</td>
+                <td th:text="${publicUser.name}"></td>
+            </tr>
+
+            <tr th:remove="${privateUser.id}? none:all">
+                <td>Email</td>
+                <td th:text="${privateUser.email}"></td>
+            </tr>
+
+            <!-- This example data will be removed by thmyeleafe during processing and replaced with the rows generated above -->
+            <tr th:remove="all">
+                <td>P</td>
+                <td>V</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <form th:remove="${privateUser.id}? none:all"
+              role="form" name="f" th:action="@{/user/passwd}" method="post">
+            <h3>To change password</h3>
+
+            <div th:if="${messagePassword}"
+                 th:text="${messagePassword}"
+                 id="messagePassword" class="alert alert-info">
+            </div>
+            <input type="password" name="password" class="form-control" placeholder="New password" required="true"/>
+            <input type="password" name="password2" class="form-control" placeholder="Repeat new password" required="true"/>
+
+            <button name="sub" class="btn btn-lg btn-primary btn-block" type="submit">Set new password</button>
+
+        </form>
+
+    </div>
+
+</div>
+</body>
+</html>
+                                                                                                  `
