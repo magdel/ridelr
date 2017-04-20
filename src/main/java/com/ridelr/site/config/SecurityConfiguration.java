@@ -1,5 +1,7 @@
 package com.ridelr.site.config;
 
+import com.ridelr.site.auth.UserAuthenticationProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,12 +30,12 @@ import java.util.regex.Pattern;
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    /* @Autowired
-     private UserAuthenticationProvider userAuthenticationProvider;
- */
+    @Autowired
+    private UserAuthenticationProvider userAuthenticationProvider;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // auth.authenticationProvider(userAuthenticationProvider);
+        auth.authenticationProvider(userAuthenticationProvider);
     }
 
     @Bean(name = "ocuAuthenticationManager")
@@ -107,13 +109,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.exceptionHandling().accessDeniedPage("/errors/403");
     }
-
-    /*@Bean
-    public PasswordEncoder passwordEncoder(){
-        PasswordEncoder encoder = new StandardPasswordEncoder();
-        return encoder;
-    }*/
-
 
     @Override
     public void configure(WebSecurity web) throws Exception {
